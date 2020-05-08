@@ -1,0 +1,129 @@
+version: '3.4'
+
+services:
+  install:
+    container_name: install
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+      args:
+        UID: ${DCUID}
+        GID: ${DCGID}
+    image: sandbox-node:5.1.0
+    volumes:
+      - .:/home/node/app:delegated
+    working_dir: /home/node/app
+    command:
+      - sh
+      - -c
+      - |
+        npm cache clean --force
+        npm i --no-optional
+        chmod -R 755 node_modules
+
+  build:
+    container_name: build
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+      args:
+        UID: ${DCUID}
+        GID: ${DCGID}
+    image: sandbox-node:5.1.0
+    environment:
+      - THROTTLE_PROGRESS=${THPRO}
+    tty: true
+    volumes:
+      - .:/home/node/app:delegated
+      - ./node_modules:/home/node/app/node_modules:cached
+    working_dir: /home/node/app
+    command:
+      - sh
+      - -c
+      - |
+        npm run ng-build -- ${NG_EXTRA}
+
+  dev:
+    container_name: dev
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+      args:
+        UID: ${DCUID}
+        GID: ${DCGID}
+    image: sandbox-node:5.1.0
+    tty: true
+    ports:
+      - 8081:8081
+      - 9229:9229
+    environment:
+      - THROTTLE_PROGRESS=${THPRO}
+    volumes:
+      - .:/home/node/app:delegated
+      - ./node_modules:/home/node/app/node_modules:cached
+    working_dir: /home/node/app
+    command:
+      - sh
+      - -c
+      - |
+        npm run ng-serve -- --host=0.0.0.0 ${NG_EXTRA}
+
+  test:
+    container_name: test
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+      args:
+        UID: ${DCUID}
+        GID: ${DCGID}
+    image: sandbox-node:5.1.0
+    depends_on:
+      - selenium-chrome
+    ports:
+      - 9876:9876
+    tty: true
+    environment:
+      - THROTTLE_PROGRESS=${THPRO}
+    volumes:
+      - .:/home/node/app:delegated
+      - ./node_modules:/home/node/app/node_modules:cached
+    working_dir: /home/node/app
+    command:
+      - sh
+      - -c
+      - |
+        dockerize -wait tcp://selenium-chrome:4444 -timeout 120s -wait-retry-interval 1s sh -c "npm run ng-test -- --browsers=ChromeSelenium ${NG_EXTRA}"
+
+  e2e:
+    container_name: e2e
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+      args:
+        UID: ${DCUID}
+        GID: ${DCGID}
+    image: sandbox-node:5.1.0
+    depends_on:
+      - selenium-chrome
+    ports:
+      - 18081:8081
+    tty: true
+    environment:
+      - THROTTLE_PROGRESS=${THPRO}
+      - HOST=${HOST}
+      - ALT_PORT=18081
+    volumes:
+      - .:/home/node/app:delegated
+      - ./node_modules:/home/node/app/node_modules:cached
+    working_dir: /home/node/app
+    command:
+      - sh
+      - -c
+      - |
+        dockerize -wait tcp://selenium-chrome:4444 -timeout 120s -wait-retry-interval 1s sh -c "npm run ng-e2e -- --host=0.0.0.0 --webdriverUpdate=false ${NG_EXTRA}"
+
+  selenium-chrome:
+    container_name: selenium-chrome
+    image: selenium/standalone-chrome:3.141.59
+    expose:
+      - 44444
