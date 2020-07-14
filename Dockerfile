@@ -13,7 +13,7 @@ EXPOSE 8080 9229
 ARG UID=1000
 ARG GID=1000
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y procps iproute2
+RUN apt-get update && apt-get upgrade -y && apt-get install -y procps iproute2 git
 
 RUN bash -c " \
     if [[ -n "$GID" && "$GID" != "1000" ]]; then \
