@@ -9,7 +9,7 @@ services:
       args:
         UID: ${DCUID}
         GID: ${DCGID}
-    image: sandbox-node:5.1.0
+    image: sandbox-node:6.0.0
     volumes:
       - .:/home/node/app:delegated
     working_dir: /home/node/app
@@ -29,9 +29,10 @@ services:
       args:
         UID: ${DCUID}
         GID: ${DCGID}
-    image: sandbox-node:5.1.0
+    image: sandbox-node:6.0.0
     environment:
       - THROTTLE_PROGRESS=${THPRO}
+      - DOCKER_EXTRA=${DOCKER_EXTRA}
     tty: true
     volumes:
       - .:/home/node/app:delegated
@@ -51,13 +52,14 @@ services:
       args:
         UID: ${DCUID}
         GID: ${DCGID}
-    image: sandbox-node:5.1.0
+    image: sandbox-node:6.0.0
     tty: true
     ports:
       - 8081:8081
       - 9229:9229
     environment:
       - THROTTLE_PROGRESS=${THPRO}
+      - DOCKER_EXTRA=${DOCKER_EXTRA}
     volumes:
       - .:/home/node/app:delegated
       - ./node_modules:/home/node/app/node_modules:cached
@@ -76,7 +78,7 @@ services:
       args:
         UID: ${DCUID}
         GID: ${DCGID}
-    image: sandbox-node:5.1.0
+    image: sandbox-node:6.0.0
     depends_on:
       - selenium-chrome
     ports:
@@ -84,6 +86,7 @@ services:
     tty: true
     environment:
       - THROTTLE_PROGRESS=${THPRO}
+      - DOCKER_EXTRA=${DOCKER_EXTRA}
     volumes:
       - .:/home/node/app:delegated
       - ./node_modules:/home/node/app/node_modules:cached
@@ -92,7 +95,7 @@ services:
       - sh
       - -c
       - |
-        dockerize -wait tcp://selenium-chrome:4444 -timeout 120s -wait-retry-interval 1s sh -c "npm run ng-test -- --browsers=ChromeSelenium ${NG_EXTRA}"
+        dockerize -wait tcp://selenium-chrome:4444 -timeout 120s -wait-retry-interval 1s sh -c "npm run ng-test -- --browsers=ChromeSelenium ${NG_EXTRA}" || exit 1
 
   e2e:
     container_name: e2e
@@ -102,7 +105,7 @@ services:
       args:
         UID: ${DCUID}
         GID: ${DCGID}
-    image: sandbox-node:5.1.0
+    image: sandbox-node:6.0.0
     depends_on:
       - selenium-chrome
     ports:
@@ -110,6 +113,7 @@ services:
     tty: true
     environment:
       - THROTTLE_PROGRESS=${THPRO}
+      - DOCKER_EXTRA=${DOCKER_EXTRA}
       - HOST=${HOST}
       - ALT_PORT=18081
     volumes:
@@ -120,10 +124,10 @@ services:
       - sh
       - -c
       - |
-        dockerize -wait tcp://selenium-chrome:4444 -timeout 120s -wait-retry-interval 1s sh -c "npm run ng-e2e -- --host=0.0.0.0 --webdriverUpdate=false ${NG_EXTRA}"
+        dockerize -wait tcp://selenium-chrome:4444 -timeout 120s -wait-retry-interval 1s sh -c "npm run ng-e2e -- --host=0.0.0.0 --webdriverUpdate=false ${NG_EXTRA}" || exit 1
 
   selenium-chrome:
     container_name: selenium-chrome
-    image: selenium/standalone-chrome:3.141.59
+    image: selenium/standalone-chrome:3.141.59-20200525
     expose:
       - 44444
