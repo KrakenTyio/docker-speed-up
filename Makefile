@@ -1,4 +1,5 @@
 NG_EXTRA:=
+DOCKER_EXTRA:=
 THPRO:=
 DCUID:=$(shell id -u)
 DCGID:=$(shell id -g)
@@ -49,7 +50,7 @@ testdev:
 	DCGID=${DCGID} \
 	NG_EXTRA="${NG_EXTRA}" \
 	THPRO=1 \
-	docker-compose up --remove-orphans --force-recreate --exit-code-from test test
+	docker-compose up ${DOCKER_EXTRA} --remove-orphans --force-recreate --exit-code-from test test
 	make down
 
 tests:
@@ -62,7 +63,7 @@ e2etest:
  	NG_EXTRA="${NG_EXTRA}" \
  	THPRO=1 \
  	HOST=${CI_TARGET_HOST} \
- 	docker-compose up --remove-orphans --force-recreate --exit-code-from e2e e2e
+ 	docker-compose up ${DOCKER_EXTRA} --remove-orphans --force-recreate --exit-code-from e2e e2e
 	make down
 
 down:
