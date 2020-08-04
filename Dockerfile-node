@@ -1,0 +1,36 @@
+FROM bartsk/node-fibers-user-chmod:latest AS base
+
+EXPOSE 8080 9229
+
+ARG UID=1000
+ARG GID=1000
+
+USER root
+
+RUN bash -c " \
+    if [[ -n "$GID" && "$GID" != "1000" ]]; then \
+      if [ -z "`getent group $GID`" ]; then \
+        groupmod -g $GID node; \
+      else \
+        groupmod -n node-old node; \
+        groupmod -n node `getent group $GID | cut -d: -f1`; \
+        usermod -g $GID node; \
+      fi \
+    fi && \
+    if [[ -n "$UID" && "$UID" != "1000" ]]; then \
+      if [ -z "`getent passwd $UID`" ]; then \
+        usermod -u $UID -g $GID node; \
+      else \
+        userdel node; \
+        usermod -l node -g $GID -d /home/node -m `getent passwd $UID | cut -d: -f1`; \
+      fi \
+    fi \
+    "
+
+USER node
+
+RUN id -u $USER
+RUN id -g $USER
+
+
+ENTRYPOINT ["dumb-init"]
