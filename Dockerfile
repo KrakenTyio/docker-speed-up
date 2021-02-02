@@ -1,4 +1,4 @@
-FROM node:14-slim as builder
+FROM node:15-slim as builder
 
 ## Install build toolchain, install node deps and compile native add-ons
 RUN apt-get update && \
@@ -6,7 +6,7 @@ RUN apt-get update && \
 RUN npm install fibers
 RUN chmod -R 777 ./node_modules/fibers ./node_modules/.bin
 
-FROM node:14-slim AS base
+FROM node:15-slim AS base
 
 EXPOSE 8080 9229
 
