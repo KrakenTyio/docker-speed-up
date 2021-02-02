@@ -1,14 +1,14 @@
-FROM node:15-slim as builder
+# FROM node:15-slim as builder
 
 ## Install build toolchain, install node deps and compile native add-ons
-RUN apt-get update && \
-    apt-get install python3 make g++ -y
-RUN npm install fibers
-RUN chmod -R 777 ./node_modules/fibers ./node_modules/.bin
+# RUN apt-get update && \
+#     apt-get install python3 make g++ -y
+# RUN npm install fibers
+# RUN chmod -R 777 ./node_modules/fibers ./node_modules/.bin
 
 FROM node:15-slim AS base
 
-EXPOSE 8080 9229
+EXPOSE 8080 9229 8888
 
 ARG UID=1000
 ARG GID=1000
@@ -52,7 +52,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 
-ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.2/dumb-init_1.2.2_amd64 /usr/local/bin/dumb-init
+ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.4/dumb-init_1.2.4_amd64 /usr/local/bin/dumb-init
 RUN chmod +x /usr/local/bin/dumb-init
 
 
@@ -97,10 +97,10 @@ RUN rm -rf /usr/local/lib/node_modules
 RUN rm /usr/local/bin/npm /usr/local/bin/npx
 
 USER node
-COPY --from=builder ./node_modules/fibers /home/node/.npm-global/lib/node_modules/fibers/
-COPY --from=builder ./node_modules/detect-libc /home/node/.npm-global/lib/node_modules/detect-libc/
+# COPY --from=builder ./node_modules/fibers /home/node/.npm-global/lib/node_modules/fibers/
+# COPY --from=builder ./node_modules/detect-libc /home/node/.npm-global/lib/node_modules/detect-libc/
 
-RUN ln -s ../lib/node_modules/detect-libc/bin/detect-libc.js /home/node/.npm-global/bin/detect-libc
+# RUN ln -s ../lib/node_modules/detect-libc/bin/detect-libc.js /home/node/.npm-global/bin/detect-libc
 
 
 ENTRYPOINT ["dumb-init"]
