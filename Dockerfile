@@ -13,7 +13,7 @@ EXPOSE 8080 9229 8888
 ARG UID=1000
 ARG GID=1000
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y procps iproute2 git
+RUN apt-get update && apt-get upgrade -y && apt-get install -y procps iproute2 git dumb-init
 
 RUN bash -c " \
     if [[ -n "$GID" && "$GID" != "1000" ]]; then \
@@ -52,8 +52,9 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 
-ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.4/dumb-init_1.2.4_amd64 /usr/local/bin/dumb-init
-RUN chmod +x /usr/local/bin/dumb-init
+# installed in apt
+# ADD https://github.com/Yelp/dumb-init/releases/download/v1.2.4/dumb-init_1.2.4_amd64 /usr/local/bin/dumb-init
+# RUN chmod +x /usr/local/bin/dumb-init
 
 
 ENV CHROME_ARGS="--no-sandbox --headless --disable-gpu --window-size=1920,1050 --disable-web-security --disable-translate --disable-extensions --disable-dev-shm-usage --hide-scrollbars --mute-audio --disable-setuid-sandbox --disable-infobars"
