@@ -68,7 +68,7 @@ ENV PATH /home/node/.npm-global/bin:$PATH
 
 ENV NPM_CONFIG_PREFIX /home/node/.npm-global
 ENV NG_CLI_ANALYTICS ci
-ENV NODE_OPTIONS --max-old-space-size=6144
+ENV NODE_OPTIONS --max-old-space-size=12288
 
 #ENV TERM xterm-256color
 
