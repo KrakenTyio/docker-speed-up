@@ -6,7 +6,7 @@
 # RUN npm install fibers
 # RUN chmod -R 777 ./node_modules/fibers ./node_modules/.bin
 
-FROM node:15-slim AS base
+FROM node:16-slim AS base
 
 EXPOSE 8080 9229 8888
 
