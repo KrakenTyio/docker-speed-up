@@ -52,3 +52,10 @@ git submodule deinit --all
 ```bash
 npm run modernizr
 ```
+
+## Build image
+docker build -f Dockerfile -t bartsk/node-fibers-user-chmod:${version} -t bartsk/node-fibers-user-chmod:latest .
+
+## Publish to dockerhub
+docker push bartsk/node-fibers-user-chmod:${version}
+docker push bartsk/node-fibers-user-chmod:latest
