@@ -55,7 +55,9 @@ npm run modernizr
 
 ## Build image
 docker build -f Dockerfile -t bartsk/node-fibers-user-chmod:${version} -t bartsk/node-fibers-user-chmod:latest .
+docker build -f Dockerfile-full -t bartsk/node-fibers-user-chmod:${version}-full .
 
 ## Publish to dockerhub
 docker push bartsk/node-fibers-user-chmod:${version}
+docker push bartsk/node-fibers-user-chmod:${version}-full
 docker push bartsk/node-fibers-user-chmod:latest
