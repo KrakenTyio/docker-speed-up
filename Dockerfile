@@ -85,9 +85,9 @@ WORKDIR /home/node/app
 RUN id -u $USER
 RUN id -g $USER
 
-RUN npm config set prefix /home/node/ \
-      npm config set cache /home/node/.npm \
-      npm config set userconfig /home/node/.npmrc
+RUN npm config set prefix /home/node/
+RUN npm config set cache /home/node/.npm
+RUN npm config set userconfig /home/node/.npmrc
 
 FROM base AS dependencies
 
